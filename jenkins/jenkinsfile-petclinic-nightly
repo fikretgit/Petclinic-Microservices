@@ -7,7 +7,7 @@ pipeline {
         AWS_ACCOUNT_ID=sh(script:'export PATH="$PATH:/usr/local/bin" && aws sts get-caller-identity --query Account --output text', returnStdout:true).trim()
         AWS_REGION="us-east-1"
         ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        ANS_KEYPAIR="ft-call-${APP_NAME}-dev-${BUILD_NUMBER}.key"
+        ANS_KEYPAIR="call-${APP_NAME}-dev-${BUILD_NUMBER}.key"
         ANSIBLE_PRIVATE_KEY_FILE="${WORKSPACE}/${ANS_KEYPAIR}"
         ANSIBLE_HOST_KEY_CHECKING="False"
     }
@@ -83,7 +83,7 @@ pipeline {
                     cd infrastructure/dev-k8s-terraform
                     sed -i "s/mattkey/$ANS_KEYPAIR/g" main.tf
                     terraform init
-                    terraform apply -auto-approve
+                    terraform apply -auto-approve -no-color
                 """
                 script {
                     echo "Kubernetes Master is not UP and running yet."
@@ -157,7 +157,7 @@ pipeline {
             echo 'Tear down the Kubernetes Cluster'
             sh """
             cd infrastructure/dev-k8s-terraform
-            terraform destroy -auto-approve
+            terraform destroy -auto-approve -no-color
             """
             echo "Delete existing key pair using AWS CLI"
             sh "aws ec2 delete-key-pair --region ${AWS_REGION} --key-name ${ANS_KEYPAIR}"
