@@ -20,3 +20,5 @@ generated/
 #VS Code
 .factorypath
 .project
+*.rkestate
+
