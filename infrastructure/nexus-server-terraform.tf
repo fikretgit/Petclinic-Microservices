@@ -24,6 +24,11 @@ resource "aws_instance" "tf-nexus-server" {
   tags = {
     Name = "nexus-server"
   }
+    ebs_block_device {
+        device_name = "/dev/xvda"
+        volume_type = "gp3"
+        volume_size = 16
+    }
   user_data = <<-EOF
   #! /bin/bash
   yum update -y
